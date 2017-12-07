@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
 
@@ -17,11 +18,6 @@ import java.awt.event.ActionEvent;
 public class Form1 {
 
 	private JFrame frame;
-	private JTextField textFieldSpeed;
-	private JTextField textFieldMouse;
-	private JTextField textFieldBirds;
-	private JTextField textFieldHeight;
-	private JTextField textFieldPoison;
 
 	/**
 	 * Launch the application.
@@ -49,10 +45,13 @@ public class Form1 {
 	 int maxCountBirds;
 	 int maxSpeed;
 	 int height;
+	 private Terrarium terrarium;
 
 	 private Interface1 inter;
+	 private JTextField textField;
 	 
 	public Form1() {
+		terrarium=new Terrarium();
 		color=Color.green;
 		dopColor=Color.YELLOW;
 		maxSpeed=150;
@@ -62,162 +61,87 @@ public class Form1 {
 		initialize();
 	}
 
-	  private boolean checkFields()
-	    {
-	        try {
-	            Integer.parseInt(textFieldMouse.getText());
-	            Integer.parseInt(textFieldSpeed.getText());
-	            Integer.parseInt(textFieldBirds.getText());
-	            Integer.parseInt(textFieldHeight.getText());
-	            Integer.parseInt(textFieldPoison.getText());
-	            return true;
-	        } catch (NumberFormatException e) {
-	            return true;
-	        }
-	    }
+	    
 	/**
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		
 		frame = new JFrame();
-		frame.setBounds(100, 100, 450, 356);
+		frame.setBounds(100, 100, 723, 401);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
-		JPanel panel = new JPanel();
-		panel.setBounds(10, 11, 414, 187);
-		frame.getContentPane().add(panel);
-		
-		JLabel lblSpeed = new JLabel("Speed:");
-		lblSpeed.setBounds(10, 209, 83, 14);
-		frame.getContentPane().add(lblSpeed);
-		
-		JLabel lblMouse = new JLabel("Mouse:");
-		lblMouse.setBounds(10, 234, 46, 14);
-		frame.getContentPane().add(lblMouse);
-		
-		JLabel lblBirds = new JLabel("Birds:");
-		lblBirds.setBounds(10, 259, 46, 14);
-		frame.getContentPane().add(lblBirds);
-		
-		JLabel lblHeight = new JLabel("Height:");
-		lblHeight.setBounds(148, 209, 46, 14);
-		frame.getContentPane().add(lblHeight);
-		
-		JLabel lblPoison = new JLabel("Poison:");
-		lblPoison.setBounds(291, 209, 46, 14);
-		frame.getContentPane().add(lblPoison);
-		
-		JLabel lblColor = new JLabel("Color1:");
-		lblColor.setBounds(148, 234, 46, 14);
-		frame.getContentPane().add(lblColor);
-		
-		JLabel lblColor_1 = new JLabel("Color2:");
-		lblColor_1.setBounds(291, 234, 46, 14);
-		frame.getContentPane().add(lblColor_1);
+		TerrariumPanel panelBig = new TerrariumPanel(terrarium);
+		panelBig.setBounds(10, 11, 503, 340);
+		frame.getContentPane().add(panelBig);
+		SnakePanel panelSmall = new SnakePanel();
+		panelSmall.setBounds(537, 231, 160, 120);
+		frame.getContentPane().add(panelSmall);
 		
 		JButton button1 = new JButton("\u0417\u0430\u0434\u0430\u0442\u044C \u0437\u043C\u0435\u044E");
 		button1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-			     if (checkFields())
-	                {
-	                    inter = new PoisonousSnake(maxSpeed, maxCountMouse, maxCountBirds,height, color,dopColor);
-	                    Graphics gr = panel.getGraphics();
-	                    gr.clearRect(0,0,panel.getWidth(),panel.getHeight());
-	                    inter.drawAnimal(gr);
-	                }
+				Interface1 inter = new PoisonousSnake(maxSpeed, maxCountMouse,maxCountBirds, height, color, dopColor);
+				int place = terrarium.putSnakeInTerrarium(inter);
+				if (place > -1) {
+					panelBig.updateTerrariumPanel(terrarium);
+					JOptionPane.showMessageDialog(null, "Ваше место: " + (place + 1), "",
+							JOptionPane.INFORMATION_MESSAGE);
+				} else {
+					JOptionPane.showMessageDialog(null, "Мест нет", "", JOptionPane.INFORMATION_MESSAGE);
+				}
 				
 			}
 		});
-		button1.setBounds(4, 284, 123, 23);
+		button1.setBounds(574, 11, 123, 23);
 		frame.getContentPane().add(button1);
 		
 		JButton button2 = new JButton("\u0417\u0430\u0434\u0430\u0442\u044C \u044F\u0434\u043E\u0432\u0438\u0442\u0443\u044E \u0437\u043C\u0435\u044E");
 		button2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				  if (checkFields())
-	                {
-	                    inter = new Kobra(maxSpeed, maxCountMouse, maxCountBirds,height, color,true,true,dopColor);
-	                    Graphics gr = panel.getGraphics();
-	                    gr.clearRect(0,0,panel.getWidth(),panel.getHeight());
-	                    inter.drawAnimal(gr);
-	                }
+				Interface1 inter = new Kobra(maxSpeed,maxCountMouse,maxCountBirds,height,color,true,true,dopColor);
+				int place = terrarium.putSnakeInTerrarium(inter);
+				if (place > -1) {
+					panelBig.updateTerrariumPanel(terrarium);
+					JOptionPane.showMessageDialog(null, "Ваше место: " + (place + 1), "",
+							JOptionPane.INFORMATION_MESSAGE);
+				} else {
+					JOptionPane.showMessageDialog(null, "Мест нет:", "", JOptionPane.INFORMATION_MESSAGE);
+				}
 			}
 		});
-		button2.setBounds(137, 284, 160, 23);
+		button2.setBounds(537, 45, 160, 23);
 		frame.getContentPane().add(button2);
 		
-		JButton button3 = new JButton("\u0414\u0432\u0438\u0436\u0435\u043D\u0438\u0435");
+		JButton button3 = new JButton("\u0417\u0430\u0431\u0440\u0430\u0442\u044C \u0437\u043C\u0435\u044E");
 		button3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				 if (inter != null)
-	                {
-	                    Graphics gr = panel.getGraphics();
-	                    gr.clearRect(0,0,panel.getWidth(),panel.getHeight());
-	                    inter.moveAnimal(gr);
-	                }
+				if (textField.getText() != "") {
+					Interface1 inter = terrarium.getSnakeInTerrarium(Integer.parseInt(textField.getText()) - 1);
+					if (inter != null) {
+						inter.setPosition(25, 55);
+						panelBig.updateTerrariumPanel(terrarium);
+						panelSmall.updatePanel(inter);
+					} else {
+						JOptionPane.showMessageDialog(null, "На таком месте нет змеи", "", JOptionPane.INFORMATION_MESSAGE);
+					}
+				}
 			}
 		});
-		button3.setBounds(310, 284, 89, 23);
+		button3.setBounds(550, 197, 139, 23);
 		frame.getContentPane().add(button3);
 		
-		JButton button4 = new JButton("Color");
-		button4.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				 Color initialBackground = button4.getBackground();
-	                Color newColor = JColorChooser.showDialog(null, "JColorChooser Sample", initialBackground);
-	                if (newColor == null) {
-	                    return;
-	                }
-	                color = newColor;
-	                button4.setBackground(newColor);
-			}
-		});
-		button4.setForeground(Color.GREEN);
-		button4.setBackground(Color.GREEN);
-		button4.setBounds(158, 255, 89, 23);
-		frame.getContentPane().add(button4);
+		JLabel label = new JLabel("\u041C\u0435\u0441\u0442\u043E:");
+		label.setBounds(550, 172, 54, 14);
+		frame.getContentPane().add(label);
 		
-		JButton btnColor = new JButton("Color");
-		btnColor.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				 Color initialBackground = btnColor.getBackground();
-	                Color newColor = JColorChooser.showDialog(null, "JColorChooser Sample", initialBackground);
-	                if (newColor == null) {
-	                    return;
-	                }
-	                dopColor = newColor;
-	                btnColor.setBackground(newColor);
-			}
-		});
-		btnColor.setForeground(Color.YELLOW);
-		btnColor.setBackground(Color.YELLOW);
-		btnColor.setBounds(301, 255, 89, 23);
-		frame.getContentPane().add(btnColor);
-	
-		textFieldSpeed = new JTextField();
-		textFieldSpeed.setBounds(52, 206, 86, 20);
-		frame.getContentPane().add(textFieldSpeed);
-		textFieldSpeed.setColumns(10);
+		textField = new JTextField();
+		textField.setBounds(611, 166, 86, 20);
+		frame.getContentPane().add(textField);
+		textField.setColumns(10);
 		
-		textFieldMouse = new JTextField();
-		textFieldMouse.setBounds(52, 231, 86, 20);
-		frame.getContentPane().add(textFieldMouse);
-		textFieldMouse.setColumns(10);
 		
-		textFieldBirds = new JTextField();
-		textFieldBirds.setBounds(52, 259, 86, 20);
-		frame.getContentPane().add(textFieldBirds);
-		textFieldBirds.setColumns(10);
-		
-		textFieldHeight = new JTextField();
-		textFieldHeight.setBounds(190, 206, 86, 20);
-		frame.getContentPane().add(textFieldHeight);
-		textFieldHeight.setColumns(10);
-		
-		textFieldPoison = new JTextField();
-		textFieldPoison.setBounds(326, 206, 86, 20);
-		frame.getContentPane().add(textFieldPoison);
-		textFieldPoison.setColumns(10);
+
 	}
 }
